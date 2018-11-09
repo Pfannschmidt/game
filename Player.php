@@ -3,6 +3,10 @@ class Player extends Creature {
 
     public function takeDamage($damageInput)
     {
+        if ($this->state == 'evade') {
+          return;
+        }
+
         parent::takeDamage($damageInput);
     }
 
@@ -15,6 +19,7 @@ class Player extends Creature {
 
     public function handleEvade()
     {
+        echo "You duck and try to evade the Monster\n";
         return;
     }
 }

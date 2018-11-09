@@ -1,6 +1,15 @@
 <?php
 class Monster extends Creature {
 
+  public function takeDamage($damageInput)
+  {
+      if ($this->state == 'evade') {
+        parent::takeDamage($damageInput / 2);
+      }
+
+      parent::takeDamage($damageInput);
+  }
+
     public function handleAttack()
     {
         $creature = GameState::getPlayer();
@@ -10,6 +19,7 @@ class Monster extends Creature {
 
     public function handleEvade()
     {
+        echo "The Monster jumps back out of your reach\n";
         return;
     }
 
