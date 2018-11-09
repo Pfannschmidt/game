@@ -13,7 +13,7 @@ class Monster extends Creature {
         return;
     }
 
-    public function prepareTurn()
+    public function prepareTurn($move = null)
     {
         switch ($this->state) {
             case 'attack':

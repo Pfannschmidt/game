@@ -17,15 +17,7 @@ do {
     system('clear');
     echo "\n";
 
-    switch ($move) {
-        case '1':
-            $player->changeState('attack');
-            break;
-        case '2':
-            $player->changeState('evade');
-            break;
-    }
-
+    $player->prepareTurn($move);
     $monster->prepareTurn();
 
     $player->execTurn();

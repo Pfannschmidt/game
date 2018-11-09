@@ -17,4 +17,16 @@ class Player extends Creature {
     {
         return;
     }
+
+    public function prepareTurn($move)
+    {
+        switch ($move) {
+            case '1':
+                $this->changeState('attack');
+                break;
+            case '2':
+                $this->changeState('evade');
+                break;
+        }
+    }
 }

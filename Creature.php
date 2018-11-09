@@ -17,6 +17,8 @@ abstract class Creature
         $this->state = $state;
     }
 
+    public abstract function prepareTurn($move);
+
     public function execTurn()
     {
         $method = 'handle' . ucfirst($this->state);
