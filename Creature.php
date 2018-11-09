@@ -6,6 +6,7 @@ abstract class Creature
     protected $baseDamage;
     protected $state = 'wait';
 
+
     public function __construct($health, $baseDamage = 1)
     {
         $this->baseDamage = $baseDamage;
@@ -41,9 +42,9 @@ abstract class Creature
         $this->health = $this->health - $damageInput;
     }
 
-    protected function dealDamage(Creature $creature, $additionalDamage = 0)
+    protected function dealDamage(Creature $creature, $damage = 0)
     {
-        return $creature->takeDamage($this->baseDamage + $additionalDamage);
+        return $creature->takeDamage($damage);
     }
 
     /**

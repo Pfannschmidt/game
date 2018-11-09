@@ -15,7 +15,7 @@ class Monster extends Creature {
         echo "The Monster leaps at you, and tries to dismember your Head from your Body\n";
         $creature = GameState::getPlayer();
 
-        return parent::dealDamage($creature);
+        return parent::dealDamage($creature, random_int(1, 2));
     }
 
     public function handleEvade()
