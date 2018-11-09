@@ -29,7 +29,7 @@ abstract class Creature
 
     public function handleWait()
     {
-        echo get_called_class() . ' is Waiting...';
+        echo get_called_class() . " is Waiting...\n";
     }
 
     public function isAlive()
@@ -39,6 +39,8 @@ abstract class Creature
 
     public function takeDamage($damageInput)
     {
+        echo get_called_class() . ' has taken ' . $damageInput . " Damage\n";
+
         $this->health = $this->health - $damageInput;
     }
 

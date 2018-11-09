@@ -4,10 +4,10 @@ class Monster extends Creature {
   public function takeDamage($damageInput)
   {
       if ($this->state == 'evade') {
-        parent::takeDamage($damageInput / 2);
+        return parent::takeDamage($damageInput / 2);
       }
 
-      parent::takeDamage($damageInput);
+      return parent::takeDamage($damageInput);
   }
 
     public function handleAttack()

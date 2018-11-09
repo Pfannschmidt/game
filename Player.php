@@ -58,7 +58,8 @@ class Player extends Creature {
             break;
         }
 
-        if (random_int(1,100) <= $critChance){
+        if (random_int(1,100) <= $this->critChance){
+            echo "OMEGALOL!\n";
             $damage = $damage * $this->critModifier;
         }
 
