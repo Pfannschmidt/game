@@ -12,6 +12,7 @@ class Monster extends Creature {
 
     public function handleAttack()
     {
+        echo "The Monster leaps at you, and tries to dismember your Head from your Body\n";
         $creature = GameState::getPlayer();
 
         return parent::dealDamage($creature);

@@ -10,8 +10,10 @@ $player = GameState::getPlayer();
 $monster = GameState::getMonster();
 
 system('clear');
+echo "\nAn Angry Monster appears in front of You\n";
 do {
-    echo "1 :attack \n2 :evade \n";
+    $player->decreaseCoolDowns();
+    $player->echoPossibleStates();
 
     $move = readline();
     system('clear');
