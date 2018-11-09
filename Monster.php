@@ -25,6 +25,5 @@ class Monster extends Creature {
             default:
                 $this->state = 'attack';
         }
-        echo $this->state;
     }
 }

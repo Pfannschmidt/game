@@ -9,6 +9,8 @@ class GameState {
         self::$player = new Player(5);
     }
 
+    private function __construct(){}
+
     /**
      * @return mixed
      */
