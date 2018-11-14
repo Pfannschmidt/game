@@ -1,14 +1,26 @@
 <?php
 class Player extends Creature {
 
+    protected $parryCoolDown = 0;
     protected $chargeCoolDown = 0;
-    protected $critModifier = 2;
-    protected $critChance = 10;
+
+
     public function takeDamage($damageInput)
     {
-        if ($this->state == 'evade') {
-          return;
+
+      if (random_int(1,100) <= $this->chanceEvade){
+        echo "Player has evaded!\n";
+        return parent::takeDamage(0);
+      }
+
+      if ($this->state == 'evade' && random_int(1,100) <= $this->chanceEvade * 2) {
+        return parent::takeDamage(0);
         }
+
+      if ($this->state == 'parry'){
+        return parent::takeDamage(0);
+
+      }
 
         parent::takeDamage($damageInput);
     }
@@ -46,9 +58,29 @@ class Player extends Creature {
         return;
     }
 
+    public function handleParry()
+    {
+
+      $monster = GameState::getMonster();
+
+      if ($monster->canBeParried())
+      {
+        $this->parryCoolDown = 3;
+        return parent::dealDamage($monster, $this->getDamage());
+        echo "I have parried your attack\n";
+      }
+
+      $this->parryCoolDown = 5;
+
+      return parent::dealDamage($monster, 0);
+    }
+
+
     public function getDamage()
     {
         $damage = $this->baseDamage;
+        $critChance = $this->critChance;
+        $critModifier = $this->critModifier;
 
         switch ($this->state) {
             case 'attack':
@@ -56,11 +88,15 @@ class Player extends Creature {
             case 'charge':
                 $damage = $damage * 2 + random_int(0, 1);
             break;
+            case 'parry':
+                $damage = $damage * 2;
+                $critChance = $critChance * 2;
+            break;
         }
 
-        if (random_int(1,100) <= $this->critChance){
+        if (random_int(1,100) <= $critChance){
             echo "OMEGALOL!\n";
-            $damage = $damage * $this->critModifier;
+            $damage = $damage * $critModifier;
         }
 
         return $damage;
@@ -76,6 +112,9 @@ class Player extends Creature {
                 $this->changeState('evade');
                 break;
             case '3':
+                $this->changeState('parry');
+                break;
+            case '4':
                 $this->changeState('charge');
                 break;
             default:
@@ -87,15 +126,31 @@ class Player extends Creature {
     {
         $possibleStates = "\n 1 :attack \n 2 :evade\n";
 
-        if ($this->chargeCoolDown <= 0) {
-            $possibleStates = $possibleStates . " 3 :charge\n";
+        if ($this->parryCoolDown <= 0) {
+            $possibleStates = $possibleStates . " 3 :parry\n";
         }
+
+        if ($this->chargeCoolDown <= 0) {
+            $possibleStates = $possibleStates . " 4 :charge\n";
+        }
+
+
 
         echo $possibleStates;
     }
 
     public function decreaseCoolDowns()
     {
-        $this->chargeCoolDown <= 0 ?: $this->chargeCoolDown--;
+      if ($this->chargeCoolDown > 0) {
+        $this->chargeCoolDown--;
+      }
+      if ($this->parryCoolDown > 0) {
+        $this->parryCoolDown--;
+      }
+    }
+
+    public function canBeParried()
+    {
+      return false;
     }
 }

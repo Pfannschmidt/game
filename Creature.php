@@ -5,12 +5,19 @@ abstract class Creature
     protected $health;
     protected $baseDamage;
     protected $state = 'wait';
+    protected $critModifier;
+    protected $critChance;
+    protected $chanceEvade;
 
-
-    public function __construct($health, $baseDamage = 1)
+    public function __construct($health, $baseDamage = 1, $critChance = 10, $critModifier = 2, $chanceEvade = 10)
     {
         $this->baseDamage = $baseDamage;
         $this->health = $health;
+        $this->critChance = $critChance;
+        $this->critModifier = $critModifier;
+        $this->chanceEvade = $chanceEvade;
+
+
     }
 
     public function changeState($state)
@@ -56,4 +63,6 @@ abstract class Creature
     {
         return $this->health;
     }
+
+    abstract public function canBeParried();
 }
