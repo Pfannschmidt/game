@@ -62,7 +62,7 @@ class Monster extends Creature {
     {
       $player = GameState::getPlayer();
 
-      if ($this->parryCoolDown >=0) {
+      if ($this->parryCoolDown >0) {
           return parent::dealDamage($player, 0);
       }
 
@@ -110,16 +110,21 @@ class Monster extends Creature {
 
     public function prepareTurn($move = null)
     {
-        switch ($this->state) {
-            case 'attack':
-                $this->state = 'evade';
-                break;
-            case 'evade':
-                $this->state = 'attack';
-                break;
-            default:
-                $this->state = 'parry';
+        $state = '';
+
+        if ($this->parryCoolDown <= 0) {
+          $state = 'parry';
         }
+
+        if ($this->parryCoolDown == 5) {
+          $state = 'evade';
+        }
+
+        if (!$state && $this->health < 4 && random_int(1,3) == 1) {
+          $state = 'evade';
+        }
+
+        $this->state = $state ?: 'attack';
     }
 
     public function decreaseCoolDowns()

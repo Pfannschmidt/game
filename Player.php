@@ -59,7 +59,7 @@ class Player extends Creature {
     {
       $monster = GameState::getMonster();
 
-      if ($this->parryCoolDown >=0) {
+      if ($this->parryCoolDown >0) {
           return parent::dealDamage($monster, 0);
       }
 
