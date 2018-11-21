@@ -83,7 +83,7 @@ class Player extends Creature {
       }
 
       $this->stunCoolDown = 3;
-      return parent::dealStun($monster, 1);
+      return parent::dealStun($monster, 2);
     }
 
 

@@ -10,10 +10,12 @@ class Monster extends Creature {
       }
 
       if ($this->state == 'evade' && random_int(1,100) <= $this->chanceEvade * 2) {
-        return parent::takeDamage(0);
+          echo "Your attack does not get anywhere near the Monster!\n";
+          return parent::takeDamage(0);
       }
 
       if ($this->state == 'parry' && $this->parryCoolDown <= 0){
+          echo "Monster has parried your Attack!\n";
         return parent::takeDamage(0);
       }
 
@@ -23,18 +25,21 @@ class Monster extends Creature {
     public function takeStun($duration)
     {
           if ($this->state == 'parry') {
-            return;
+              echo "Monster has parried your Stun attempt!\n";
+              return;
           }
 
           $this->stunDuration = $duration;
 
-          echo "the monster got stunned\n";
+          echo "The Monster has been hit hard against its head and is Stunned for the $duration \n";
 
     }
 
     protected function preTurnHook()
     {
+
       if ($this->stunDuration > 0) {
+        $this->stunDuration--;
         echo "The Monster tumbles and is still Stunned from your incredible Blow\n";
         return false;
       }
@@ -62,13 +67,13 @@ class Monster extends Creature {
     {
       $player = GameState::getPlayer();
 
-      if ($this->parryCoolDown >0) {
+      if ($this->parryCoolDown > 0) {
           return parent::dealDamage($player, 0);
       }
 
       if ($player->canBeParried()) {
         $this->parryCoolDown = 3;
-        echo "I have parried your attack\n";
+        echo "The Monster ducks below Your swing and charges Back at You\n";
         return parent::dealDamage($player, $this->getDamage());
       }
 
@@ -129,8 +134,8 @@ class Monster extends Creature {
 
     public function decreaseCoolDowns()
     {
-      if ($this->stunDuration > 0) {
-        $this->stunDuration--;
+      if ($this->parryCoolDown > 0) {
+        $this->parryCoolDown--;
       }
     }
 }
