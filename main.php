@@ -13,6 +13,7 @@ system('clear');
 echo "\nAn Angry Monster appears in front of You\n";
 do {
     $player->decreaseCoolDowns();
+    $monster->decreaseCoolDowns();
     $player->echoPossibleStates();
 
     $move = readline();
@@ -22,15 +23,19 @@ do {
     $player->prepareTurn($move);
     $monster->prepareTurn();
 
-    $player->execTurn();
-    $monster->execTurn();
+    $creatures = [$player, $monster];
+    shuffle($creatures);
+
+    array_walk($creatures, function ($creature) {
+      $creature->execTurn();
+    });
 
     echo "\n";
     echo "Your Health is " . $player->getHealth();
     echo "\n";
     echo "The Monster has " . $monster->getHealth() . " Health";
     echo "\n";
-    echo "\n";
+
 } while ($monster->isAlive() && $player->isAlive());
 
 if ($player->isAlive()) {

@@ -8,6 +8,11 @@ abstract class Creature
     protected $critModifier;
     protected $critChance;
     protected $chanceEvade;
+    protected $stunDuration = 0;
+    protected $parryCoolDown = 0;
+    protected $chargeCoolDown = 0;
+    protected $stunCoolDown = 0;
+
 
     public function __construct($health, $baseDamage = 1, $critChance = 10, $critModifier = 2, $chanceEvade = 10)
     {
@@ -29,9 +34,18 @@ abstract class Creature
 
     public function execTurn()
     {
-        $method = 'handle' . ucfirst($this->state);
+      if(!$this->preTurnHook()) {
+        return;
+      }
 
-        return $this->$method();
+      $method = 'handle' . ucfirst($this->state);
+
+      return $this->$method();
+    }
+
+    protected function preTurnHook()
+    {
+        return true;
     }
 
     public function handleWait()
@@ -56,6 +70,11 @@ abstract class Creature
         return $creature->takeDamage($damage);
     }
 
+    protected function dealStun(Creature $creature, $duration = 0)
+    {
+        return $creature->takeStun($duration);
+    }
+
     /**
      * @return int
      */
@@ -65,4 +84,6 @@ abstract class Creature
     }
 
     abstract public function canBeParried();
+
+    abstract public function decreaseCoolDowns();
 }

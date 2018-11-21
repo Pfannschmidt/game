@@ -13,20 +13,41 @@ class Monster extends Creature {
         return parent::takeDamage(0);
       }
 
+      if ($this->state == 'parry' && $this->parryCoolDown <= 0){
+        return parent::takeDamage(0);
+      }
+
       return parent::takeDamage($damageInput);
   }
+
+    public function takeStun($duration)
+    {
+          if ($this->state == 'parry') {
+            return;
+          }
+
+          $this->stunDuration = $duration;
+
+          echo "the monster got stunned\n";
+
+    }
+
+    protected function preTurnHook()
+    {
+      if ($this->stunDuration > 0) {
+        echo "The Monster tumbles and is still Stunned from your incredible Blow\n";
+        return false;
+      }
+
+      return parent::preTurnHook();
+    }
 
     public function handleAttack()
     {
         echo "The Monster leaps at you, and tries to dismember your Head from your Body\n";
         $creature = GameState::getPlayer();
 
-          $damage = $this->baseDamage;
-
-          if (random_int(1,100) <= $this->critChanceMonster){
-            echo "Monster crits\n";
-            $damage = $damage * $this->critModifierMonster;
-          }
+          $damage = $this->getDamage();
 
         return parent::dealDamage($creature, $damage);
     }
@@ -35,6 +56,47 @@ class Monster extends Creature {
     {
         echo "The Monster jumps back out of your reach\n";
         return;
+    }
+
+    public function handleParry()
+    {
+      $player = GameState::getPlayer();
+
+      if ($this->parryCoolDown >=0) {
+          return parent::dealDamage($player, 0);
+      }
+
+      if ($player->canBeParried()) {
+        $this->parryCoolDown = 3;
+        echo "I have parried your attack\n";
+        return parent::dealDamage($player, $this->getDamage());
+      }
+
+      $this->parryCoolDown = 5;
+
+      return parent::dealDamage($player, 0);
+    }
+
+    public function getDamage()
+    {
+        $damage = $this->baseDamage;
+        $critChance = $this->critChance;
+        $critModifier = $this->critModifier;
+
+        switch ($this->state) {
+            case 'attack':
+            break;
+            case 'parry':
+                $critChance = $critChance * 2;
+            break;
+        }
+
+        if (random_int(1,100) <= $critChance){
+            echo "MONSTER CRITS ON YOU!\n";
+            $damage = $damage * $critModifier;
+        }
+
+        return $damage;
     }
 
     public function canBeParried()
@@ -56,7 +118,14 @@ class Monster extends Creature {
                 $this->state = 'attack';
                 break;
             default:
-                $this->state = 'attack';
+                $this->state = 'parry';
         }
+    }
+
+    public function decreaseCoolDowns()
+    {
+      if ($this->stunDuration > 0) {
+        $this->stunDuration--;
+      }
     }
 }

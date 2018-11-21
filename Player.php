@@ -1,8 +1,6 @@
 <?php
 class Player extends Creature {
 
-    protected $parryCoolDown = 0;
-    protected $chargeCoolDown = 0;
 
 
     public function takeDamage($damageInput)
@@ -17,9 +15,8 @@ class Player extends Creature {
         return parent::takeDamage(0);
         }
 
-      if ($this->state == 'parry'){
+      if ($this->state == 'parry' && $this->parryCoolDown <= 0){
         return parent::takeDamage(0);
-
       }
 
         parent::takeDamage($damageInput);
@@ -60,19 +57,33 @@ class Player extends Creature {
 
     public function handleParry()
     {
-
       $monster = GameState::getMonster();
 
-      if ($monster->canBeParried())
-      {
+      if ($this->parryCoolDown >=0) {
+          return parent::dealDamage($monster, 0);
+      }
+
+      if ($monster->canBeParried()) {
         $this->parryCoolDown = 3;
-        return parent::dealDamage($monster, $this->getDamage());
         echo "I have parried your attack\n";
+        return parent::dealDamage($monster, $this->getDamage());
       }
 
       $this->parryCoolDown = 5;
 
       return parent::dealDamage($monster, 0);
+    }
+
+    public function handleStun()
+    {
+      $monster = GameState::getMonster();
+
+      if ($this->stunCoolDown > 0){
+        return;
+      }
+
+      $this->stunCoolDown = 3;
+      return parent::dealStun($monster, 1);
     }
 
 
@@ -102,6 +113,7 @@ class Player extends Creature {
         return $damage;
     }
 
+
     public function prepareTurn($move)
     {
         switch ($move) {
@@ -116,6 +128,9 @@ class Player extends Creature {
                 break;
             case '4':
                 $this->changeState('charge');
+                break;
+            case '5':
+                $this->changeState('stun');
                 break;
             default:
                 $this->changeState('wait');
@@ -134,6 +149,11 @@ class Player extends Creature {
             $possibleStates = $possibleStates . " 4 :charge\n";
         }
 
+        if ($this->stunCoolDown <= 0) {
+            $possibleStates = $possibleStates . " 5 :stun\n";
+
+        }
+
 
 
         echo $possibleStates;
@@ -147,10 +167,22 @@ class Player extends Creature {
       if ($this->parryCoolDown > 0) {
         $this->parryCoolDown--;
       }
+      if ($this->stunCoolDown > 0)  {
+        $this->stunCoolDown--;
+      }
+
     }
 
     public function canBeParried()
     {
+      if ($this->state == 'attack'){
+        return true;
+      }
+
+      if ($this->state == 'stun'){
+        return true;
+      }
+
       return false;
     }
 }
