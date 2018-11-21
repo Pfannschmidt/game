@@ -1,6 +1,7 @@
 <?php
 require 'Creature.php';
 require 'Monster.php';
+require 'Orc.php';
 require 'Player.php';
 require 'GameState.php';
 

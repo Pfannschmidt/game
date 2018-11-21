@@ -15,7 +15,7 @@ class Player extends Creature {
         return parent::takeDamage(0);
         }
 
-      if ($this->state == 'parry' && $this->parryCoolDown <= 0){
+      if ($this->state == 'parry'){
         return parent::takeDamage(0);
       }
 
@@ -124,6 +124,11 @@ class Player extends Creature {
                 $this->changeState('evade');
                 break;
             case '3':
+                if ($this->parryCoolDown > 0) {
+                  $this->changeState('wait');
+                  break;
+                }
+
                 $this->changeState('parry');
                 break;
             case '4':
